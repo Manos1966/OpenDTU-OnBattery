@@ -297,11 +297,6 @@ void PowerLimiterClass::loop()
         } else {
             return (_oneStopPerNightDone) ? BatteryState::STOP : BatteryState::DISCHARGE_NIGHT;
         }
-
-        // we should never reach this line, but if we do, we use a safe fallback.
-        DTU_LOGE("Unexpected condition in battery state machine, using fallback state: STOP");
-        _fromStart = false;
-        return BatteryState::STOP;
     };
 
     auto getFullSolarPassthrough = [this,&config]() -> bool {
