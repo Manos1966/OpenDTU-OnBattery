@@ -671,7 +671,7 @@ std::optional<bool> BatteryGuardClass::isStopThresholdReached(bool const inState
     if (stopReached && !inStateStop) {
         getLocalTime(&_stopTime, 5);
         _lastStopState = (emergencyStop) ? LState::STOP_EMERGENCY : LState::STOP_NORMAL;
-        DTU_LOGI("State: %s, Average battery voltage: %0.3fV, Battery voltage: %0.3fV)\r\n",
+        DTU_LOGI("State: %s, Average battery voltage: %0.3fV, Battery voltage: %0.3fV",
             gLimiterStateText(_lState).data(), avgVoltage, _battVoltage);
 
         _lState = _lastStopState;

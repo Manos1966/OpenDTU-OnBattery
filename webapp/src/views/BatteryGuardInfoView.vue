@@ -581,6 +581,10 @@ export default defineComponent({
                 .then((data) => {
                     this.batteryGuardStatus = data;
                 })
+                .catch(() => {
+                    /* handleResponse already emits toast/redirect for HTTP errors;
+                       this prevents an unhandled rejection for network failures */
+                })
                 .finally(() => {
                     this.dataLoading = false;
                 });
