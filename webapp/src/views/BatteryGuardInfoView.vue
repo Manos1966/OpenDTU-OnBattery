@@ -328,7 +328,9 @@
                                     </template>
                                     <template v-else>
                                         <td class="value">
-                                            <span class="badge text-bg-danger"> {{ $t('batteryguardinfo.ResistanceCalculationNotPossible') }} </span>
+                                            <span class="badge text-bg-danger">
+                                                {{ $t('batteryguardinfo.ResistanceCalculationNotPossible') }}
+                                            </span>
                                         </td>
                                         <td></td>
                                     </template>

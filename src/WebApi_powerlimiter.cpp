@@ -111,7 +111,7 @@ void WebApiPowerLimiterClass::onAdminPost(AsyncWebServerRequest* request)
     request->send(response);
 
     PowerLimiter.triggerReloadingConfig();
-    BatteryGuard.updateSettings();
+    BatteryGuard.updateSettings(BatteryGuardClass::UpdateSource::DPL);
 
     // potentially make thresholds auto-discoverable
     MqttHandlePowerLimiterHass.forceUpdate();

@@ -89,13 +89,13 @@ void BatteryGuardClass::init(Scheduler& scheduler) {
     _slowLoopTask.setInterval(60*1000);
     _slowLoopTask.enable();
 
-    updateSettings();
+    updateSettings(BatteryGuardClass::UpdateSource::STARTUP);
 }
 
 
 /*
  * Update the settings of the 'Battery Guard'. This function should be called, if DPL or battery configuration has changed
- * source: source of the update request (default: STARTUP)
+ * UpdateSource: source of the update request (default: STARTUP)
  * Hint: We can not use MQTT changeable values here because this function isn't called from MQTT.
  *       MQTT changeable values are only used in the "fastLoop" and "slowLoop".
  */
@@ -1344,7 +1344,7 @@ void BatteryGuardClass::printRechargeReport(void) const {
         } else {
             DTU_LOGD("SoC Start Threshold: %0.2f%% [%i%%-%i%%]", _oSoCStartThreshold.value_or(0.0f),
                 config.PowerLimiter.BatterySocStartThreshold, config.BatteryGuard.MaxSoCStartThreshold);
-            DTU_LOGD("SoC Stop Threshold: %0.2f%% [%0i%%-%i%%]", _oSoCStopThreshold.value_or(0.0f),
+            DTU_LOGD("SoC Stop Threshold: %0.2f%% [%i%%-%i%%]", _oSoCStopThreshold.value_or(0.0f),
                 config.PowerLimiter.BatterySocStopThreshold, config.BatteryGuard.MaxSoCStopThreshold);
         }
 

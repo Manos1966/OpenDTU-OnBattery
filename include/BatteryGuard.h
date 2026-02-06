@@ -17,6 +17,7 @@
 #include <atomic>
 #include <frozen/string.h>
 #include <TaskSchedulerDeclarations.h>
+#include <ArduinoJson.h>
 #include "Statistic.h"
 
 
