@@ -179,9 +179,9 @@ class BatteryGuardClass {
         std::optional<float> _oVoltageStartThreshold;       // shared data, battery voltage start threshold, std::nullopt if not active
         std::optional<float> _oSoCStartThreshold;           // shared data, battery SoC start threshold, std::nullopt if not active
         std::optional<float> _oSoCStopThreshold;            // shared data, battery SoC stop threshold, std::nullopt if not active
-        bool _configError = false;                          // true if a configuration error is detected
-        bool _lastTimeTrigger = false;                      // true if the trigger has already been triggered within the time window
-        time_t _spareEpoch = 0;                             // buffer for the spare epoch if the SoC full epoch is not available
+        bool _configError = false;                          // true if a configuration error was detected
+        bool _lastTimeTrigger = false;                      // true if the trigger was already activated within the time window.
+        time_t _fallbackSoCEpoch = 0;                       // fallback epoch if the 100% SoC epoch is not available
 };
 
 extern BatteryGuardClass BatteryGuard;

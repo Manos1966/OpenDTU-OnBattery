@@ -490,25 +490,31 @@ std::optional<float> BatteryGuardClass::gResistanceUsed(void) const {
 
 
 /*
- * Prepare the battery DC-Pulse Resistance to be written into the runtime file
+ * Prepare data to be written into the runtime file
  */
 void BatteryGuardClass::serializeRTD(JsonObject const& obj) const {
     std::shared_lock<std::shared_mutex> lock(_mutex);
 
+    // DC-Pulse Resistance
     obj["dc_pulse_resistance"] = _resistanceFromCalcAVG.getAverage();
     auto counts = static_cast<uint16_t>(_resistanceFromCalcAVG.getCounts());
     auto factor = static_cast<uint16_t>(_resistanceFromCalcAVG.getFactor());
     if (counts > factor) { counts = factor; } // limit the counts to the factor
     obj["dc_pulse_resistance_counts"] = counts;
+
+    // Recharge Helper, SoC fallback time
+    obj["fallback_soc_epoch"] = _fallbackSoCEpoch;
+
 }
 
 
 /*
- * Read the battery DC-Pulse Resistance from the runtime file
+ * Read the data from the runtime file
  */
 void BatteryGuardClass::deserializeRTD(JsonObject const& obj) {
     std::unique_lock<std::shared_mutex> lock(_mutex);
 
+    // DC-Pulse Resistance
     float resistance =  obj["dc_pulse_resistance"] | 0.0f;
     uint16_t counts = obj["dc_pulse_resistance_counts"] | 0;
     _resistanceFromCalcAVG.reset();
@@ -519,6 +525,9 @@ void BatteryGuardClass::deserializeRTD(JsonObject const& obj) {
             _resistanceFromCalcAVG.addNumber(resistance);
         }
     }
+
+    // Recharge Helper, SoC fallback time
+    _fallbackSoCEpoch = obj["fallback_soc_epoch"] | 0U;
 }
 
 
@@ -1251,11 +1260,12 @@ std::optional<uint16_t> BatteryGuardClass::gDaysSinceLastFullyCharged(time_t epo
     if (epochNow == 0) { return oDay; }
 
     if (epochFull != 0) {
-        _spareEpoch = 0; // the SoC full epoch is available, reset the spare epoch
+        // the 100% SoC epoch is available, we can reset the fallback epoch
+        _fallbackSoCEpoch = 0;
     } else {
-        // the SoC full epoch is not available, we use the now epoch as a fallback
-        if (_spareEpoch == 0) { _spareEpoch = epochNow; }
-        epochFull = _spareEpoch;
+        // the 100% SoC epoch is not available, we use the now epoch as a fallback
+        if (0 == _fallbackSoCEpoch) { _fallbackSoCEpoch = epochNow; }
+        epochFull = _fallbackSoCEpoch;
     }
 
     // start day counting from midnight
@@ -1329,7 +1339,7 @@ void BatteryGuardClass::printRechargeReport(void) const {
     if (_useRechargeHelper) {
         DTU_LOGD("State: %s", gRechargeStateText(_hState).data());
         DTU_LOGD("Configuration error: %s", _configError ? "Yes" : "No");
-        DTU_LOGD("Using 100%% SoC time from: %s", _spareEpoch ? "System startup" : "Battery");
+        DTU_LOGD("Using 100%% SoC time from: %s", _fallbackSoCEpoch ? "Fallback" : "Battery");
         DTU_LOGD("Time since the start of the cycle: %i days", _dayCounter);
         DTU_LOGD("Start day of state 'Increase Thresholds': %i", config.BatteryGuard.DurationIdle);
         DTU_LOGD("Start day of state 'Decrease Power': %i", config.BatteryGuard.DurationIdle + config.BatteryGuard.DurationStage1);
