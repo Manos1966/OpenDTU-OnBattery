@@ -125,6 +125,9 @@ void BatteryGuardClass::updateSettings(UpdateSource const source) {
     // and the sum of the "upper power limit" from all battery powered inverters
     _useStopVoltageLimiter =  _useCurrentCompensation && config.BatteryGuard.LowVoltageLimiterEnabled;
     _lState = (_useStopVoltageLimiter) ? LState::IDLE : LState::OFF;
+    if (_lState != LState::OFF && config.BatteryGuard.RechargeHelperEnabled && !config.BatteryGuard.UseVoltageThresholds) {
+        _lState = LState::ERROR; // combination of "Stop-Voltage Limiter" and "Recharge Helper" with "SoC thresholds" doesn't make sense
+    }
     _lowerPowerLimitOneInverter = 9999;
     _upperPowerLimitFromConfig = 0;
     for (size_t i = 0; i < INV_MAX_COUNT; ++i) {
@@ -791,7 +794,6 @@ uint16_t BatteryGuardClass::calculateStopVoltagePowerLimit(uint16_t const reques
     // In case of outdated values we use the last limit to avoid false limit calculation and to save processing time
     // To avoid the millis() rollover problem we only compare time durations and not points in time.
     auto nowMillis = millis();
-    //if ((_battMillis == _lastBatteryMillis) || ((nowMillis - _battMillis) > (nowMillis - lastMillis + _analyzedPeriod.getAverage()))) {
     if ((nowMillis - _battMillis) > (nowMillis - lastMillis + _analyzedPeriod.getAverage())) {
         if ((_lState == LState::IDLE) || (_lState == LState::ERROR)) {
             return cleanUp(requestedPower, _lState, false);
@@ -799,7 +801,6 @@ uint16_t BatteryGuardClass::calculateStopVoltagePowerLimit(uint16_t const reques
             return cleanUp(std::min(requestedPower, _stopLimitPower), LState::OUTDATED_MEASUREMENT, false);
         }
     }
-    //_lastBatteryMillis = _battMillis;
 
     // the minimum size of the target voltage range depends on the resolution the hysteresis and the resistance
     _halfOfTargetRange = std::max(_analyzedResolutionV * 1.5f, 0.01f);
@@ -1089,7 +1090,7 @@ void BatteryGuardClass::calculateRechargeHelper(time_t const fullEpoch, time_t c
                 config.BatteryGuard.MaxSoCStartThreshold,
                 config.BatteryGuard.MaxSoCStopThreshold);
         }
-        _configError = (config.BatteryGuard.UpperPowerLimit <= gUpperPowerLimitUsed()) ? _configError : true;
+        if (config.BatteryGuard.UpperPowerLimit >= gUpperPowerLimitUsed()) { _configError = true; }
     }
 
     auto oDay = gDaysSinceLastFullyCharged(fullEpoch, nowEpoch);

@@ -167,7 +167,7 @@ class BatteryGuardClass {
         void calculateRechargeHelper(time_t const fullEpoch, time_t const nowEpoch);
         void resetRechargeHelper(void);
         bool gRechargeTimeTrigger(time_t const nowEpoch);
-        bool thresholdsValid(float startMin, float startMax, float stopMin, float stopMax) const;
+        bool thresholdsValid(float startMinDPL, float stopMinDPL, float startMax, float stopMax) const;
         void printRechargeReport(void) const;
         std::optional<uint16_t> gDaysSinceLastFullyCharged(time_t epochFull, time_t epochNow);
         frozen::string const& gRechargeStateText(HState const state) const;

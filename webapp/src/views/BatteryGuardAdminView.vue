@@ -53,7 +53,7 @@
                     add-space
                 >
                     <InputElement
-                        :label="$t('batteryguardadmin.StartStopEnabled')"
+                        :label="$t('batteryguardadmin.CompensationEnabled')"
                         v-model="batteryGuardConfig.voltage_drop_compensation_enabled"
                         type="checkbox"
                         wide
@@ -66,7 +66,25 @@
                             type="checkbox"
                             :tooltip="$t('batteryguardadmin.LowVoltageLimiterHint')"
                             wide
+                            :disabled="
+                                batteryGuardConfig.recharge_helper_enabled && !batteryGuardConfig.use_voltage_thresholds
+                            "
                         />
+
+                        <template v-if="batteryGuardConfig.low_voltage_limiter_enabled">
+                            <InputElement
+                                :label="$t('batteryguardadmin.DPLStopThreshold')"
+                                v-model="batteryGuardConfig.dpl_stop_threshold"
+                                type="number"
+                                min="0"
+                                max="100"
+                                step="1"
+                                postfix="V"
+                                :tooltip="$t('batteryguardadmin.DPLStopThresholdHint')"
+                                wide
+                                :disabled="true"
+                            />
+                        </template>
 
                         <InputElement
                             :label="$t('batteryguardadmin.InternalResistance')"
@@ -78,32 +96,6 @@
                             postfix="mOhm"
                             :tooltip="$t('batteryguardadmin.InternalResistanceHint')"
                             wide
-                        />
-
-                        <InputElement
-                            :label="$t('batteryguardadmin.DPLStartThreshold')"
-                            v-model="batteryGuardConfig.dpl_start_threshold"
-                            type="number"
-                            min="0"
-                            max="100"
-                            step="1"
-                            postfix="V"
-                            :tooltip="$t('batteryguardadmin.DPLStartThresholdHint')"
-                            wide
-                            :disabled="true"
-                        />
-
-                        <InputElement
-                            :label="$t('batteryguardadmin.DPLStopThreshold')"
-                            v-model="batteryGuardConfig.dpl_stop_threshold"
-                            type="number"
-                            min="0"
-                            max="100"
-                            step="1"
-                            postfix="V"
-                            :tooltip="$t('batteryguardadmin.DPLStartThresholdHint')"
-                            wide
-                            :disabled="true"
                         />
                     </template>
 
@@ -144,6 +136,10 @@
                             type="checkbox"
                             :tooltip="$t('batteryguardadmin.RechargeHelperUseVoltageHint')"
                             wide
+                            :disabled="
+                                batteryGuardConfig.voltage_drop_compensation_enabled &&
+                                batteryGuardConfig.low_voltage_limiter_enabled
+                            "
                         />
 
                         <InputElement
