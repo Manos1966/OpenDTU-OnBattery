@@ -50,7 +50,7 @@
 #include "BatteryGuard.h"
 
 
-// Can be useful if we detect 'Stop Voltage Limiter' regulation problems
+// Can be useful if we detect 'Stop-Voltage Limiter' regulation problems
 //#define OPTION_CORRECTION_FACTOR
 
 
@@ -147,8 +147,6 @@ void BatteryGuardClass::updateSettings(UpdateSource const source) {
     _useRechargeHelper = _useBatteryGuard && config.BatteryGuard.RechargeHelperEnabled;
     if ((source != UpdateSource::BATTERY)) {
         if (_useRechargeHelper) {
-            //_socError = 0;
-            _configError = false;
             _hState = HState::START;
         } else {
             resetRechargeHelper();
@@ -1073,10 +1071,10 @@ void BatteryGuardClass::calculateRechargeHelper(time_t const fullEpoch, time_t c
     // check config errors
     auto const& config = Configuration.get();
 
+    _configError = false;
     if (config.PowerLimiter.IgnoreSoc && !config.BatteryGuard.UseVoltageThresholds) {
         _configError = true; // invalid configuration, if DPL use voltage (ignores SoC) we also need voltage thresholds
     } else {
-
         if (config.BatteryGuard.UseVoltageThresholds) {
             _configError = !thresholdsValid(
                 config.PowerLimiter.VoltageStartThreshold,
@@ -1090,8 +1088,8 @@ void BatteryGuardClass::calculateRechargeHelper(time_t const fullEpoch, time_t c
                 config.BatteryGuard.MaxSoCStartThreshold,
                 config.BatteryGuard.MaxSoCStopThreshold);
         }
-        if (config.BatteryGuard.UpperPowerLimit >= gUpperPowerLimitUsed()) { _configError = true; }
     }
+    if (config.BatteryGuard.UpperPowerLimit >= gUpperPowerLimitUsed()) { _configError = true; }
 
     auto oDay = gDaysSinceLastFullyCharged(fullEpoch, nowEpoch);
 
@@ -1359,8 +1357,8 @@ void BatteryGuardClass::printRechargeReport(void) const {
                 config.PowerLimiter.BatterySocStopThreshold, config.BatteryGuard.MaxSoCStopThreshold);
         }
 
-        DTU_LOGD("Power Limit: %iW [%iW-%iW]", _oPowerLimit.value_or(0),
-            config.BatteryGuard.UpperPowerLimit, gUpperPowerLimitUsed());
+        DTU_LOGD("Power Limit: %iW [%iW-%iW]", _oPowerLimit.value_or(0), gUpperPowerLimitUsed(), config.BatteryGuard.UpperPowerLimit);
+        DTU_LOGD("DPL Use Voltage Thresholds Only: %s", config.BatteryGuard.UseVoltageThresholds ? "Yes" : "No");
     }
 }
 
