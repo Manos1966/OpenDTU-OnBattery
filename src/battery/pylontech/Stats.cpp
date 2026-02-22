@@ -42,32 +42,64 @@ void Stats::getLiveViewData(JsonVariant& root) const
     addLiveViewAlarm(root, "bmsInternal", _alarmBmsInternal);
 }
 
+auto inv = Hoymiles.getInverterByPos(1);
+const String subtopic = inv->serialString();
+
 void Stats::mqttPublish() const
 {
     ::Batteries::Stats::mqttPublish();
 
-    MqttSettings.publish("battery/settings/chargeVoltage", String(_chargeVoltage));
-    MqttSettings.publish("battery/settings/dischargeVoltageLimitation", String(_dischargeVoltageLimitation));
-    MqttSettings.publish("battery/stateOfHealth", String(_stateOfHealth));
-    MqttSettings.publish("battery/temperature", String(_temperature));
-    MqttSettings.publish("battery/alarm/overCurrentDischarge", String(_alarmOverCurrentDischarge));
-    MqttSettings.publish("battery/alarm/overCurrentCharge", String(_alarmOverCurrentCharge));
-    MqttSettings.publish("battery/alarm/underTemperature", String(_alarmUnderTemperature));
-    MqttSettings.publish("battery/alarm/overTemperature", String(_alarmOverTemperature));
-    MqttSettings.publish("battery/alarm/underVoltage", String(_alarmUnderVoltage));
-    MqttSettings.publish("battery/alarm/overVoltage", String(_alarmOverVoltage));
-    MqttSettings.publish("battery/alarm/bmsInternal", String(_alarmBmsInternal));
-    MqttSettings.publish("battery/warning/highCurrentDischarge", String(_warningHighCurrentDischarge));
-    MqttSettings.publish("battery/warning/highCurrentCharge", String(_warningHighCurrentCharge));
-    MqttSettings.publish("battery/warning/lowTemperature", String(_warningLowTemperature));
-    MqttSettings.publish("battery/warning/highTemperature", String(_warningHighTemperature));
-    MqttSettings.publish("battery/warning/lowVoltage", String(_warningLowVoltage));
-    MqttSettings.publish("battery/warning/highVoltage", String(_warningHighVoltage));
-    MqttSettings.publish("battery/warning/bmsInternal", String(_warningBmsInternal));
-    MqttSettings.publish("battery/charging/chargeEnabled", String(_chargeEnabled));
-    MqttSettings.publish("battery/charging/dischargeEnabled", String(_dischargeEnabled));
-    MqttSettings.publish("battery/charging/chargeImmediately", String(_chargeImmediately));
-    MqttSettings.publish("battery/modulesTotal", String(_moduleCount));
+    MqttSettings.publish(subtopic + "battery/settings/chargeVoltage", String(_chargeVoltage));
+    MqttSettings.publish(subtopic + "battery/settings/dischargeVoltageLimitation", String(_dischargeVoltageLimitation));
+    MqttSettings.publish(subtopic + "battery/stateOfHealth", String(_stateOfHealth));
+    MqttSettings.publish(subtopic + "battery/temperature", String(_temperature));
+    MqttSettings.publish(subtopic + "battery/alarm/overCurrentDischarge", String(_alarmOverCurrentDischarge));
+    MqttSettings.publish(subtopic + "battery/alarm/overCurrentCharge", String(_alarmOverCurrentCharge));
+    MqttSettings.publish(subtopic + "battery/alarm/underTemperature", String(_alarmUnderTemperature));
+    MqttSettings.publish(subtopic + "battery/alarm/overTemperature", String(_alarmOverTemperature));
+    MqttSettings.publish(subtopic + "battery/alarm/underVoltage", String(_alarmUnderVoltage));
+    MqttSettings.publish(subtopic + "battery/alarm/overVoltage", String(_alarmOverVoltage));
+    MqttSettings.publish(subtopic + "battery/alarm/bmsInternal", String(_alarmBmsInternal));
+    MqttSettings.publish(subtopic + "battery/warning/highCurrentDischarge", String(_warningHighCurrentDischarge));
+    MqttSettings.publish(subtopic + "battery/warning/highCurrentCharge", String(_warningHighCurrentCharge));
+    MqttSettings.publish(subtopic + "battery/warning/lowTemperature", String(_warningLowTemperature));
+    MqttSettings.publish(subtopic + "battery/warning/highTemperature", String(_warningHighTemperature));
+    MqttSettings.publish(subtopic + "battery/warning/lowVoltage", String(_warningLowVoltage));
+    MqttSettings.publish(subtopic + "battery/warning/highVoltage", String(_warningHighVoltage));
+    MqttSettings.publish(subtopic + "battery/warning/bmsInternal", String(_warningBmsInternal));
+    MqttSettings.publish(subtopic + "battery/charging/chargeEnabled", String(_chargeEnabled));
+    MqttSettings.publish(subtopic + "battery/charging/dischargeEnabled", String(_dischargeEnabled));
+    MqttSettings.publish(subtopic + "battery/charging/chargeImmediately", String(_chargeImmediately));
+    MqttSettings.publish(subtopic + "battery/modulesTotal", String(_moduleCount));
 }
+
+void Stats::mqttPublish() const
+{
+    ::Batteries::Stats::mqttPublish();
+
+    MqttSettings.publish("dtu/hostname" + "battery/settings/chargeVoltage", String(_chargeVoltage));
+    MqttSettings.publish("dtu/hostname" + "battery/settings/dischargeVoltageLimitation", String(_dischargeVoltageLimitation));
+    MqttSettings.publish("dtu/hostname" + "battery/stateOfHealth", String(_stateOfHealth));
+    MqttSettings.publish("dtu/hostname" + "battery/temperature", String(_temperature));
+    MqttSettings.publish("dtu/hostname" + "battery/alarm/overCurrentDischarge", String(_alarmOverCurrentDischarge));
+    MqttSettings.publish("dtu/hostname" + "battery/alarm/overCurrentCharge", String(_alarmOverCurrentCharge));
+    MqttSettings.publish("dtu/hostname" + "battery/alarm/underTemperature", String(_alarmUnderTemperature));
+    MqttSettings.publish("dtu/hostname" + "battery/alarm/overTemperature", String(_alarmOverTemperature));
+    MqttSettings.publish("dtu/hostname" + "battery/alarm/underVoltage", String(_alarmUnderVoltage));
+    MqttSettings.publish("dtu/hostname" + "battery/alarm/overVoltage", String(_alarmOverVoltage));
+    MqttSettings.publish("dtu/hostname" + "battery/alarm/bmsInternal", String(_alarmBmsInternal));
+    MqttSettings.publish("dtu/hostname" + "battery/warning/highCurrentDischarge", String(_warningHighCurrentDischarge));
+    MqttSettings.publish("dtu/hostname" + "battery/warning/highCurrentCharge", String(_warningHighCurrentCharge));
+    MqttSettings.publish("dtu/hostname" + "battery/warning/lowTemperature", String(_warningLowTemperature));
+    MqttSettings.publish("dtu/hostname" + "battery/warning/highTemperature", String(_warningHighTemperature));
+    MqttSettings.publish("dtu/hostname" + "battery/warning/lowVoltage", String(_warningLowVoltage));
+    MqttSettings.publish("dtu/hostname" + "battery/warning/highVoltage", String(_warningHighVoltage));
+    MqttSettings.publish("dtu/hostname" + "battery/warning/bmsInternal", String(_warningBmsInternal));
+    MqttSettings.publish("dtu/hostname" + "battery/charging/chargeEnabled", String(_chargeEnabled));
+    MqttSettings.publish("dtu/hostname" + "battery/charging/dischargeEnabled", String(_dischargeEnabled));
+    MqttSettings.publish("dtu/hostname" + "battery/charging/chargeImmediately", String(_chargeImmediately));
+    MqttSettings.publish("dtu/hostname" + "battery/modulesTotal", String(_moduleCount));
+}
+
 
 } // namespace Batteries::Pylontech
