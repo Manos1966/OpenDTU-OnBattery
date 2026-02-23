@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 #include <MqttSettings.h>
 #include <battery/pylontech/Stats.h>
+#include "MqttHandleInverter.h"
 
 namespace Batteries::Pylontech {
 
@@ -73,33 +74,7 @@ void Stats::mqttPublish() const
     MqttSettings.publish(subtopic + "battery/modulesTotal", String(_moduleCount));
 }
 
-void Stats::mqttPublish() const
-{
-    ::Batteries::Stats::mqttPublish();
 
-    MqttSettings.publish("dtu/hostname" + "battery/settings/chargeVoltage", String(_chargeVoltage));
-    MqttSettings.publish("dtu/hostname" + "battery/settings/dischargeVoltageLimitation", String(_dischargeVoltageLimitation));
-    MqttSettings.publish("dtu/hostname" + "battery/stateOfHealth", String(_stateOfHealth));
-    MqttSettings.publish("dtu/hostname" + "battery/temperature", String(_temperature));
-    MqttSettings.publish("dtu/hostname" + "battery/alarm/overCurrentDischarge", String(_alarmOverCurrentDischarge));
-    MqttSettings.publish("dtu/hostname" + "battery/alarm/overCurrentCharge", String(_alarmOverCurrentCharge));
-    MqttSettings.publish("dtu/hostname" + "battery/alarm/underTemperature", String(_alarmUnderTemperature));
-    MqttSettings.publish("dtu/hostname" + "battery/alarm/overTemperature", String(_alarmOverTemperature));
-    MqttSettings.publish("dtu/hostname" + "battery/alarm/underVoltage", String(_alarmUnderVoltage));
-    MqttSettings.publish("dtu/hostname" + "battery/alarm/overVoltage", String(_alarmOverVoltage));
-    MqttSettings.publish("dtu/hostname" + "battery/alarm/bmsInternal", String(_alarmBmsInternal));
-    MqttSettings.publish("dtu/hostname" + "battery/warning/highCurrentDischarge", String(_warningHighCurrentDischarge));
-    MqttSettings.publish("dtu/hostname" + "battery/warning/highCurrentCharge", String(_warningHighCurrentCharge));
-    MqttSettings.publish("dtu/hostname" + "battery/warning/lowTemperature", String(_warningLowTemperature));
-    MqttSettings.publish("dtu/hostname" + "battery/warning/highTemperature", String(_warningHighTemperature));
-    MqttSettings.publish("dtu/hostname" + "battery/warning/lowVoltage", String(_warningLowVoltage));
-    MqttSettings.publish("dtu/hostname" + "battery/warning/highVoltage", String(_warningHighVoltage));
-    MqttSettings.publish("dtu/hostname" + "battery/warning/bmsInternal", String(_warningBmsInternal));
-    MqttSettings.publish("dtu/hostname" + "battery/charging/chargeEnabled", String(_chargeEnabled));
-    MqttSettings.publish("dtu/hostname" + "battery/charging/dischargeEnabled", String(_dischargeEnabled));
-    MqttSettings.publish("dtu/hostname" + "battery/charging/chargeImmediately", String(_chargeImmediately));
-    MqttSettings.publish("dtu/hostname" + "battery/modulesTotal", String(_moduleCount));
-}
 
 
 } // namespace Batteries::Pylontech
